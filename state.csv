@@ -1,0 +1,52 @@
+State_ID,State_Name,Region
+Alabama,Alabama,South
+Alaska,Alaska,NA
+Arizona,Arizona,Rocky Mountain
+Arkansas,Arkansas,South
+California,California,Pacific Coast
+Colorado,Colorado,Rocky Mountain
+Connecticut,Connecticut,North
+Delaware,Delaware,North
+Florida,Florida,South
+Georgia,Georgia,South
+Hawaii,Hawaii,Pacific Coast
+Idaho,Idaho,Rocky Mountain
+Illinois,Illinois,North
+Indiana,Indiana,North
+Iowa,Iowa,North
+Kansas,Kansas,Rocky Mountain
+Kentucky,Kentucky,South
+Louisiana,Louisiana,South
+Maine,Maine,North
+Maryland,Maryland,North
+Massachusetts,Massachusetts,North
+Michigan,Michigan,North
+Minnesota,Minnesota,North
+Mississippi,Mississippi,South
+Missouri,Missouri,North
+Montana,Montana,Rocky Mountain
+Nebraska,Nebraska,Rocky Mountain
+Nevada,Nevada,Rocky Mountain
+New Hampshire,New Hampshire,North
+New Jersey,New Jersey,North
+New Mexico,New Mexico,Rocky Mountain
+New York,New York,North
+North Carolina,North Carolina,South
+North Dakota,North Dakota,Rocky Mountain
+Ohio,Ohio,North
+Oklahoma,Oklahoma,South
+Oregon,Oregon,Pacific Coast
+Pennsylvania,Pennsylvania,North
+Rhode Island,Rhode Island,North
+South Carolina,South Carolina,South
+South Dakota,South Dakota,Rocky Mountain
+Tennessee,Tennessee,South
+Texas,Texas,South
+Utah,Utah,Rocky Mountain
+Vermont,Vermont,North
+Virginia,Virginia,South
+Washington,Washington,Pacific Coast
+West Virginia,West Virginia,North
+Wisconsin,Wisconsin,North
+Wyoming,Wyoming,Rocky Mountain
+U.S. Territories,U.S. Territories,NA

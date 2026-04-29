@@ -1,0 +1,9 @@
+Pool_ID,Pool_Name,Description
+Total Forest Ecosystem,Total Forest Ecosystem/Total Woodland Ecosystem,sum of all individual pools (Aboveground biomass + Belowground biomass + Dead wood + Litter + Soil organic carbon)
+Aboveground Biomass,Aboveground biomass,"all living biomass above the soil including stem, stump, branches, bark, seeds, and foliage (this pool includes live understory)"
+Belowground Biomass,Belowground biomass,all living biomass of coarse roots with diameters greater than 2 millimeters
+Dead Wood,Dead wood,"all nonliving woody biomass either standing, lying on the ground (but not including litter), or in the soil"
+Litter,Litter,"all duff, humus, and fine woody debris above the mineral soil, including woody fragments with diameters of up to 7.5 centimeters"
+Soil (Mineral),Soil organic carbon (SOC),"all organic material in soil to a depth of 1 meter but excluding the coarse roots of the belowground pool. This pool is split into Soil (Mineral) and  Soil (Organic). Organic soils are differentiated from mineral soils based on the thickness of the organic horizon and percent organic matter. Organic soils are assumed to be wet, and drained organic soils are further differentiated by drainage or the process of artificially lowering the soil water table which exposes the organic material to drying."
+Soil (Organic),Soil (Organic),NA
+Drained Organic Soil,Drained Organic Soil,NA
