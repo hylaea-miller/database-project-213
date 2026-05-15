@@ -3,7 +3,6 @@ title: "Data Cleaning"
 format: html
 ---
 
-
 ```{r}
 # Load necessary libraries
 library(tidyverse)
@@ -45,7 +44,6 @@ glimpse(stock_raw)
 glimpse(carbon_pool)
 glimpse(region_raw)
 ```
-
 
 
 ## Clean data

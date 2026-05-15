@@ -23,7 +23,7 @@ DATABASE-PROJECT-213/
 ├── data_cleaning.qmd            # Data cleaning
 ├── analysis.ipynb               # Data visualization
 ├── requirements-R.txt           # R package dependencies for cleaning purpose
-├── requirements-python.txt      # Python dependencies for analysis purpose
+├── requirements.txt             # Python dependencies for analysis purpose
 ├── .gitignore
 └── README.md
 ```

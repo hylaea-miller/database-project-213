@@ -13,6 +13,3 @@ WHERE stock.Pool_ID = 'Aboveground Biomass'
 GROUP BY state.State_Name, state.Region
 ORDER BY avg_carbon_stock_mmt DESC
 LIMIT 5;
-
-
-
