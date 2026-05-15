@@ -139,7 +139,7 @@ unique(carbon_pool$Pool_ID)
 ### Standardize carbon_pool pool names
 ```{r}
 # The Pool names in carbon_pool don't match flux and stock due to inconsistent naming
-# It's necessary to standardize carbon_pool to match the other 2 tables
+# It's necessary to standardize carbon_pool to match the other two tables
 
 carbon_pool <- carbon_pool %>% 
   mutate(Pool_ID = case_when(
