@@ -10,10 +10,6 @@ CREATE TABLE carbon_pool (
     Description VARCHAR
 );
 
-
--- Fact Tables
-
-
 CREATE TABLE stock (
     Stock_ID  INTEGER PRIMARY KEY,
     State_ID  VARCHAR REFERENCES state(State_ID),
@@ -33,17 +29,17 @@ CREATE TABLE flux (
 
 
 COPY state (State_ID, State_Name, Region)
-FROM '../state.csv'
+FROM '../data/processed/state.csv'
 DELIMITER ',' CSV HEADER;
 
 COPY carbon_pool (Pool_ID, Pool_Name, Description)
-FROM '../carbon_pool.csv'
+FROM '../data/processed/carbon_pool.csv'
 (HEADER TRUE, DELIMITER ',');
 
 COPY stock (Stock_ID, State_ID, Pool_ID, Year, Value)
-FROM '../stock.csv'
+FROM '../data/processed/stock.csv'
 (HEADER TRUE, DELIMITER ',', NULLSTR 'NA');
 
 COPY flux (Flux_ID, State_ID, Pool_ID, Year, Unit, Value)
-FROM '../flux.csv'
+FROM '../data/processed/flux.csv'
 (HEADER TRUE, DELIMITER ',', NULLSTR 'NA');

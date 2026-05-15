@@ -1,0 +1,177 @@
+---
+title: "Data Cleaning"
+format: html
+---
+
+
+```{r}
+# Load necessary libraries
+library(tidyverse)
+library(janitor)
+library(here)
+```
+
+
+## Read data
+
+```{r}
+# Load region descriptions data
+region_raw <- read_csv(here("Data/raw/region_descriptions.csv")) %>%
+  clean_names()
+
+# Load state names from flux file
+state_raw <- read_csv(here("Data/raw/By_State/FRF_net_flux_by_State.csv")) %>%
+  clean_names()
+
+# Load carbon pools data
+carbon_pool <- read_csv(here("Data/raw/carbon_pool_descriptions.csv")) %>%
+  clean_names()
+
+# Load carbon flux data
+flux_raw <- read_csv(here("Data/raw/By_State/FRF_net_flux_by_State.csv")) %>%
+  clean_names()
+
+# Load carbon stock data
+stock_raw <- read_csv(here("Data/raw/By_State/FRF_stock_by_State.csv")) %>%
+  clean_names()
+```
+
+## Explore data
+
+```{r}
+# Check structure and column types of each file
+glimpse(flux_raw)
+glimpse(stock_raw)
+glimpse(carbon_pool)
+glimpse(region_raw)
+```
+
+
+
+## Clean data
+```{r}
+# Expand the list of states into one row per state 
+# Region descriptions list all states in a single comma-separated string per row
+# Splitting into one row per state so we can join region to each state individually and create the state entity
+region_expanded <- region_raw %>%
+  separate_rows(description, sep = ",\\s*") %>%   # split comma separated states
+  rename(
+    Region = region,
+    State_Name = description
+  ) %>%
+  mutate(State_Name = str_trim(State_Name))
+
+# Get unique states and join their region to create the state entity
+# Using state name as the ID since no numeric ID exists in the source data
+state <- state_raw %>%
+  distinct(state) %>%
+  rename(State_Name = state) %>%
+  mutate(State_ID = State_Name) %>%
+  left_join(region_expanded, by = "State_Name") %>%
+  select(State_ID, State_Name, Region)
+```
+
+```{r}
+# Rename columns to create the primary key of the carbon pool entity
+# Pool_ID and Pool_Name use the same value because the source file has no separate ID
+carbon_pool <- carbon_pool %>% 
+  mutate(
+    Pool_ID = carbon_pool,
+    Pool_Name = carbon_pool,
+    Description = description
+  ) %>% 
+  select(Pool_ID, Pool_Name, Description)
+```
+
+
+```{r}
+# The raw flux data has one column per year, so it needs pivoting to long format
+# Since R adds an "x" prefix to numeric column names, we remove it to get a clean integer year
+# Foreign key columns are renamed to match the primary keys of the related tables
+flux <- flux_raw %>%
+  pivot_longer(
+    cols = matches("\\d{4}$"),   #  Find the column names that end with a 4‑digit year
+    names_to = "Year",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Year = as.integer(str_remove(Year, "^x"))  # remove the "x"
+  ) %>%
+ mutate(
+  # Create a primary key for the entity based on the index of the row
+    Flux_ID = row_number(),
+    State_ID = state,
+    Pool_ID = carbon_pools,
+    Year = as.integer(str_remove(Year, "^x")),
+    Unit = net_flux_unit
+  ) %>%
+  select(Flux_ID, State_ID, Pool_ID, Year, Unit, Value)
+
+```
+
+
+```{r}
+# Same pivoting to long reshape as flux
+# Stock covers 1990-2023, where flux only goes to 2022 per the metadata
+stock <- stock_raw %>%
+  pivot_longer(
+    cols = matches(".*\\d{4}$"),   # match any column ending in a 4 digit year
+    names_to = "Year",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Year = as.integer(str_extract(Year, "\\d{4}")),  # extract the year
+      # Create a primary key for the entity based on the index of the row
+    Stock_ID = row_number(),
+    State_ID = state,
+    Pool_ID = carbon_pools
+  ) %>%
+  select(Stock_ID, State_ID, Pool_ID, Year, Value)
+
+```
+
+
+```{r}
+# Check pool names across all three tables. Mismatches can break foreign key relationships in the database
+unique(flux$Pool_ID)
+unique(stock$Pool_ID)
+unique(carbon_pool$Pool_ID)
+```
+
+### Standardize carbon_pool pool names
+```{r}
+# The Pool names in carbon_pool don't match flux and stock due to inconsistent naming
+# It's necessary to standardize carbon_pool to match the other 2 tables
+
+carbon_pool <- carbon_pool %>% 
+  mutate(Pool_ID = case_when(
+    Pool_ID == "Total Forest Ecosystem/Total Woodland Ecosystem" ~ "Total Forest Ecosystem",
+    Pool_ID == "Aboveground biomass" ~ "Aboveground Biomass",
+    Pool_ID == "Belowground biomass" ~ "Belowground Biomass",
+    Pool_ID == "Dead wood" ~ "Dead Wood",
+    Pool_ID == "Soil organic carbon (SOC)" ~ "Soil (Mineral)",
+    TRUE ~ Pool_ID
+  )) %>% 
+  # Add missing pools from flux
+  bind_rows(
+    tibble(Pool_ID = c("Soil (Organic)", "Drained Organic Soil"),
+           Pool_Name = c("Soil (Organic)", "Drained Organic Soil"),
+           Description = NA)
+  )
+```
+
+
+## Write Output
+
+```{r}
+# Set output path and create folder if it does not exist
+datadir_processed <- file.path(here("Data", "processed"))
+dir.create(datadir_processed, showWarnings = FALSE)
+
+# Export cleaned tables as CSVs for ingestion into DuckDB
+write_csv(carbon_pool, file.path(datadir_processed, "carbon_pool.csv"))
+write_csv(state, file.path(datadir_processed, "state.csv"))
+write_csv(flux, file.path(datadir_processed, "flux.csv"))
+write_csv(stock, file.path(datadir_processed, "stock.csv"))
+```
+
